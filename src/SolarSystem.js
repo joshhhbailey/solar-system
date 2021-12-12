@@ -8,7 +8,7 @@ export default class SolarSystem
   {
     this.m_scene = _scene;
 
-    // Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
+    // Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
     this.m_planets = [];
 
     // 1 : 10,000 scale, km
@@ -22,13 +22,26 @@ export default class SolarSystem
     // 1 : 10 scale, days
     // https://spaceplace.nasa.gov/years-on-other-planets/sp/
     this.m_orbitTimes = [8.8, 22.5, 36.5, 68.7, 433.3, 1075.9, 3068.7, 6019.0];
+
+    // https://www.solarsystemscope.com/textures/
+    this.m_texturePaths = 
+    [
+      "2k_mercury.jpg",
+      "2k_venus_surface.jpg",
+      "2k_earth_daymap.jpg",
+      "2k_mars.jpg",
+      "2k_jupiter.jpg",
+      "2k_saturn.jpg",
+      "2k_uranus.jpg",
+      "2k_neptune.jpg"
+    ];
   }
 
   createPlanets()
   {
     for (let i = 0; i < 8; ++i)
     {
-      let planet = new Planet(this.m_diameters[i], this.m_distancesFromSun[i], this.m_orbitTimes[i], this.m_scene);
+      let planet = new Planet(this.m_diameters[i], this.m_distancesFromSun[i], this.m_orbitTimes[i], this.m_texturePaths[i], this.m_scene);
       this.m_planets.push(planet);
     }
   }
@@ -45,6 +58,32 @@ export default class SolarSystem
 
       star.position.set(x, y, z);
       this.m_scene.add(star);
+    }
+  }
+
+  createLight()
+  {
+    const ambientLight = new THREE.AmbientLight(0xffffff);
+    this.m_scene.add(ambientLight);
+  }
+
+  update(_speed)
+  {
+    for (let i = 0; i < this.m_planets.length; ++i)
+    {
+      // Orbits - Degrees per second (radians)
+      this.m_planets[i].m_theta += ((360 / this.m_orbitTimes[i]) * (Math.PI / 180)) * _speed;
+
+      this.m_planets[i].m_mesh.position.x = Math.sin(this.m_planets[i].m_theta) * this.m_planets[i].m_distance;
+      this.m_planets[i].m_mesh.position.z = Math.cos(this.m_planets[i].m_theta) * this.m_planets[i].m_distance;
+
+      if (this.m_planets[i].m_theta >= 2 * Math.PI)
+      {
+        this.m_planets[i].m_theta = 0.0;
+      }
+
+      // Axis rotation
+      // ...
     }
   }
 }

@@ -23,14 +23,13 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const solarSystem = new SolarSystem(scene);
 solarSystem.createPlanets();
 solarSystem.createStars(200);
+solarSystem.createLight();
 
 // Initialise time
 let fps = 60.0;
 let frameTime = 1.0 / fps;      // Standardised frame time of 60fps
 let previousTime = Date.now();
 let elapsedTime = 0.0;
-
-let speed = 0.25;
 
 // Game loop
 function draw()
@@ -39,20 +38,7 @@ function draw()
   let deltaTime = (currentTime - previousTime) / 1000.0;
   previousTime = currentTime;
 
-  // Update planets
-  for (let i = 0; i < solarSystem.m_planets.length; ++i)
-  {
-    // Degrees per second (radians)
-    solarSystem.m_planets[i].m_theta += ((360 / solarSystem.m_orbitTimes[i]) * (Math.PI / 180)) * speed;
-
-    solarSystem.m_planets[i].m_mesh.position.x = Math.sin(solarSystem.m_planets[i].m_theta) * solarSystem.m_planets[i].m_distance;
-    solarSystem.m_planets[i].m_mesh.position.z = Math.cos(solarSystem.m_planets[i].m_theta) * solarSystem.m_planets[i].m_distance;
-
-    if (solarSystem.m_planets[i].m_theta >= 2 * Math.PI)
-    {
-      solarSystem.m_planets[i].m_theta = 0.0;
-    }
-  }
+  solarSystem.update(0.25);
 
   elapsedTime += deltaTime;
 

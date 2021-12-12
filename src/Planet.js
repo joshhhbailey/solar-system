@@ -2,11 +2,12 @@ import * as THREE from 'three';
 
 export default class Planet
 {
-  constructor(_diameter, _distance, _orbitTime, _scene)
+  constructor(_diameter, _distance, _orbitTime, _texturePath, _scene)
   {
     this.m_diameter = _diameter;
     this.m_distance = _distance;
     this.m_orbitTime = _orbitTime;
+    this.m_texturePath = _texturePath;
     this.m_scene = _scene
     this.m_theta = 0.0;
 
@@ -16,7 +17,10 @@ export default class Planet
   createPlanet()
   {
     this.m_geometry = new THREE.SphereGeometry(this.m_diameter / 2);
-    this.m_material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    //this.m_material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    console.log("../textures/planets/" + this.m_texturePath);
+    this.m_texture = new THREE.TextureLoader().load("../textures/planets/" + this.m_texturePath);
+    this.m_material = new THREE.MeshStandardMaterial({map: this.m_texture});
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);
 
     this.m_mesh.position.set(0, 0, this.m_distance);
