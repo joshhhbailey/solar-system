@@ -75,16 +75,25 @@ export default class SolarSystem
   {
     for (let i = 0; i < this.m_planets.length; ++i)
     {
-      // NOTE: Mesh positions and rotation may break if numbers get too big (site is left running for a long time)
       // Orbit
       this.m_planets[i].m_orbitTheta += (((360 / this.m_orbitTimes[i]) * (Math.PI / 180)) / _fps) * _timeScale;
       this.m_planets[i].m_mesh.position.x = Math.sin(this.m_planets[i].m_orbitTheta) * this.m_planets[i].m_distance;
       this.m_planets[i].m_mesh.position.z = Math.cos(this.m_planets[i].m_orbitTheta) * this.m_planets[i].m_distance;
 
+      if (this.m_planets[i].m_orbitTheta >= 2 * Math.PI)
+      {
+        this.m_planets[i].m_orbitTheta %= 2 * Math.PI;
+      }
+
       // Axis rotation
       let rotationsPerSecond = (this.m_orbitTimes[i] / this.m_rotationTimes[i]) / this.m_orbitTimes[i];
       let rotationsInRadians = (rotationsPerSecond * 360 * (Math.PI / 180)) / _fps;
       this.m_planets[i].m_mesh.rotation.y += rotationsInRadians * _timeScale;
+
+      if (this.m_planets[i].m_mesh.rotation.y >= 2 * Math.PI)
+      {
+        this.m_planets[i].m_mesh.rotation.y %= 2 * Math.PI;
+      }
     }
   }
 }
