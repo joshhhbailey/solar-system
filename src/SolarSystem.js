@@ -19,9 +19,13 @@ export default class SolarSystem
     // https://www.jpl.nasa.gov/edu/pdfs/scaless_reference.pdf
     this.m_distancesFromSun = [5.79, 10.82, 14.96, 22.79, 77.86, 143.35, 287.25, 449.51];
 
-    // 1 : 10 scale, days
-    // https://spaceplace.nasa.gov/years-on-other-planets/sp/
+    // 1 : 10 scale, earth days to complete orbit
+    // https://spaceplace.nasa.gov/years-on-other-planets/en/
     this.m_orbitTimes = [8.8, 22.5, 36.5, 68.7, 433.3, 1075.9, 3068.7, 6019.0];
+
+    // 1 : 0.1 scale, earth days to complete rotation
+    // https://spaceplace.nasa.gov/days/en/
+    this.m_rotationTimes = [586.7, 2430, 10, 10.4, 4.17, 4.58, 7.08, 6.7];
 
     // https://www.solarsystemscope.com/textures/
     this.m_texturePaths = 
@@ -67,23 +71,20 @@ export default class SolarSystem
     this.m_scene.add(ambientLight);
   }
 
-  update(_speed)
+  update(_timeScale, _fps)
   {
     for (let i = 0; i < this.m_planets.length; ++i)
     {
-      // Orbits - Degrees per second (radians)
-      this.m_planets[i].m_theta += ((360 / this.m_orbitTimes[i]) * (Math.PI / 180)) * _speed;
-
-      this.m_planets[i].m_mesh.position.x = Math.sin(this.m_planets[i].m_theta) * this.m_planets[i].m_distance;
-      this.m_planets[i].m_mesh.position.z = Math.cos(this.m_planets[i].m_theta) * this.m_planets[i].m_distance;
-
-      if (this.m_planets[i].m_theta >= 2 * Math.PI)
-      {
-        this.m_planets[i].m_theta = 0.0;
-      }
+      // NOTE: Mesh positions and rotation may break if numbers get too big (site is left running for a long time)
+      // Orbit
+      this.m_planets[i].m_orbitTheta += (((360 / this.m_orbitTimes[i]) * (Math.PI / 180)) / _fps) * _timeScale;
+      this.m_planets[i].m_mesh.position.x = Math.sin(this.m_planets[i].m_orbitTheta) * this.m_planets[i].m_distance;
+      this.m_planets[i].m_mesh.position.z = Math.cos(this.m_planets[i].m_orbitTheta) * this.m_planets[i].m_distance;
 
       // Axis rotation
-      // ...
+      let rotationsPerSecond = (this.m_orbitTimes[i] / this.m_rotationTimes[i]) / this.m_orbitTimes[i];
+      let rotationsInRadians = (rotationsPerSecond * 360 * (Math.PI / 180)) / _fps;
+      this.m_planets[i].m_mesh.rotation.y += rotationsInRadians * _timeScale;
     }
   }
 }

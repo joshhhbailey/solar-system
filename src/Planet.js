@@ -9,7 +9,7 @@ export default class Planet
     this.m_orbitTime = _orbitTime;
     this.m_texturePath = _texturePath;
     this.m_scene = _scene
-    this.m_theta = 0.0;
+    this.m_orbitTheta = 0.0;
 
     this.createPlanet()
   }
@@ -17,8 +17,6 @@ export default class Planet
   createPlanet()
   {
     this.m_geometry = new THREE.SphereGeometry(this.m_diameter / 2);
-    //this.m_material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
-    console.log("../textures/planets/" + this.m_texturePath);
     this.m_texture = new THREE.TextureLoader().load("../textures/planets/" + this.m_texturePath);
     this.m_material = new THREE.MeshStandardMaterial({map: this.m_texture});
     this.m_mesh = new THREE.Mesh(this.m_geometry, this.m_material);

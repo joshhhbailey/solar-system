@@ -38,9 +38,10 @@ function draw()
   let deltaTime = (currentTime - previousTime) / 1000.0;
   previousTime = currentTime;
 
-  solarSystem.update(0.25);
+  solarSystem.update(1.0, fps);
 
   elapsedTime += deltaTime;
+  //console.log("Elapsed:", elapsedTime);
 
   controls.update();
 
